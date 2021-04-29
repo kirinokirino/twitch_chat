@@ -73,6 +73,7 @@ function parseEmotes(message, parent, emotes) {
             parseInt(end, 10) + 1
         );
         const img = document.createElement("img");
+        img.classList.add("aBitSmaller");
         img.src = `https://static-cdn.jtvnw.net/emoticons/v1/${id}/2.0`;
         for (const position of positions) {
             let pos = {};
