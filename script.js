@@ -63,9 +63,7 @@ function add_chat_message(nick, message, emotes) {
 
 function parseEmotes(message, parent, emotes) {
     if (!emotes) return;
-    let emotesArray = [];
-    let instances = [];
-    let replacementsArray = [];
+    let emote = [];
     Object.entries(emotes).forEach(([id, positions]) => {
         // use only the first position to find out the emote key word
         const position = positions[0];
@@ -74,34 +72,51 @@ function parseEmotes(message, parent, emotes) {
             parseInt(start, 10),
             parseInt(end, 10) + 1
         );
-        instances.push(positions.length);
-        replacementsArray.push(stringToReplace);
-        emotesArray.push(id);
-    });
-
-    let images = [];
-    emotesArray.forEach((emote, index) => {
         const img = document.createElement("img");
-        img.classList.add("aBitSmaller");
-        img.src = `https://static-cdn.jtvnw.net/emoticons/v1/${emote}/2.0`;
-        for (let i = 0; i < instances[index]; i++) {
-            images.push(img.cloneNode());
-            console.log(images);
-            message = message.replace(replacementsArray[index], "🚓");
+        img.src = `https://static-cdn.jtvnw.net/emoticons/v1/${id}/2.0`;
+        for (const position of positions) {
+            let pos = {};
+            const [start, end] = position.split("-");
+            pos.idx = parseInt(start);
+            pos.len = parseInt(end - start + 1);
+            emote.push({
+                img: img,
+                name: stringToReplace,
+                position: pos,
+            });
         }
     });
 
-    textParts = message.split("🚓");
-    images.forEach((img, index) => {
-        let s = document.createElement("span");
-        s.textContent = textParts[index];
-        parent.appendChild(s);
-        parent.appendChild(img);
+    emote.sort((a, b) => a.position.idx - b.position.idx);
+    textParts = chunks(message, emote);
+    textParts.forEach((part, index) => {
+        if (index % 2 === 0) {
+            let s = document.createElement("span");
+            s.textContent = part;
+            parent.appendChild(s);
+        } else {
+            parent.appendChild(emote.shift().img.cloneNode());
+        }
     });
-    let s = document.createElement("span");
-    s.textContent = textParts[textParts.length - 1];
-    parent.appendChild(s);
 }
+
+let chunks = (txt, emotes) => {
+    let tmpEmotes = [];
+    emotes.forEach((e) => {
+        tmpEmotes.push({ name: e.name, pos: e.position });
+    });
+
+    let parts = [];
+    let idx = 0;
+    tmpEmotes.sort((a, b) => a.pos.idx - b.pos.idx);
+    tmpEmotes.forEach((e) => {
+        parts.push(txt.substr(idx, e.pos.idx - idx));
+        parts.push(txt.substr(e.pos.idx, e.pos.len));
+        idx = e.pos.idx + e.pos.len;
+    });
+    parts.push(txt.substr(idx, txt.length - idx));
+    return parts;
+};
 
 function fade_in(el) {
     el.classList.add("show");
