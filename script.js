@@ -64,6 +64,7 @@ function add_chat_message(nick, message, emotes) {
 function parseEmotes(message, parent, emotes) {
     if (!emotes) return;
     let emotesArray = [];
+    let instances = [];
     let replacementsArray = [];
     Object.entries(emotes).forEach(([id, positions]) => {
         // use only the first position to find out the emote key word
@@ -73,7 +74,7 @@ function parseEmotes(message, parent, emotes) {
             parseInt(start, 10),
             parseInt(end, 10) + 1
         );
-
+        instances.push(positions.length);
         replacementsArray.push(stringToReplace);
         emotesArray.push(id);
     });
@@ -83,8 +84,11 @@ function parseEmotes(message, parent, emotes) {
         const img = document.createElement("img");
         img.classList.add("aBitSmaller");
         img.src = `https://static-cdn.jtvnw.net/emoticons/v1/${emote}/2.0`;
-        images.push(img);
-        message = message.replace(replacementsArray[index], "🚓");
+        for (let i = 0; i < instances[index]; i++) {
+            images.push(img.cloneNode());
+            console.log(images);
+            message = message.replace(replacementsArray[index], "🚓");
+        }
     });
 
     textParts = message.split("🚓");
