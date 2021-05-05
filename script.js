@@ -1,3 +1,24 @@
+import init, { search_kanji } from "./kanji_collector.js";
+
+let dict;
+async function run() {
+    await init();
+    dict = await fetch("http://0.0.0.0:8080/jmdictObject.json")
+        .then((response) => {
+            return response.json();
+        })
+        .then(async (jsonData) => {
+            return await jsonData;
+        });
+    console.log(Object.keys(dict).includes("見える"));
+    console.log(
+        make_furigana(
+            "この建物は現代的に見える。君が知ってる人の中で誰が一番賢い？"
+        )
+    );
+}
+run();
+
 const client = new tmi.Client({
     connection: { reconnect: true },
     channels: ["kirinokirino"],
@@ -28,6 +49,7 @@ coin.setAttribute("src", "coin.png");
 let first_message_chatters = [""];
 
 function add_chat_message(nick, message, emotes) {
+    console.log(make_furigana(message));
     let li = document.createElement("li");
     let header = document.createElement("h4");
     let header_contents = "";
@@ -44,6 +66,7 @@ function add_chat_message(nick, message, emotes) {
     header_contents += nick + ":";
     header.innerHTML = header_contents;
     let p = document.createElement("p");
+
     if (emotes) {
         parseEmotes(message, p, emotes);
     } else {
@@ -89,7 +112,7 @@ function parseEmotes(message, parent, emotes) {
     });
 
     emote.sort((a, b) => a.position.idx - b.position.idx);
-    textParts = chunks(message, emote);
+    let textParts = chunks(message, emote);
     textParts.forEach((part, index) => {
         if (index % 2 === 0) {
             let s = document.createElement("span");
@@ -118,6 +141,51 @@ let chunks = (txt, emotes) => {
     parts.push(txt.substr(idx, txt.length - idx));
     return parts;
 };
+
+function zip(arrays) {
+    return arrays[0].map(function (_, i) {
+        return arrays.map(function (array) {
+            return array[i];
+        });
+    });
+}
+
+function make_furigana(message) {
+    let kanjis = search_kanji(message).kanjis;
+    let t = [];
+    for (let i = 0; i < kanjis.length; i++) {
+        let found = "X";
+        if (dict[kanjis[i]] !== undefined) {
+            console.log(kanjis[i]);
+            found = dict[kanjis[i]];
+        } else {
+            let len = kanjis[i].length;
+            let index = message.indexOf(kanjis[i]);
+            let res = message.substr(index, len + 1);
+            if (dict[res] !== undefined) {
+                console.log(res);
+                found = dict[res];
+                kanjis[i] = res;
+            } else {
+                res = message.substr(index - 1, len + 1);
+                if (dict[res] !== undefined) {
+                    console.log(res);
+                    found = dict[res];
+                    kanjis[i] = res;
+                } else {
+                    res = message.substr(index, len + 2);
+                    if (dict[res] !== undefined) {
+                        console.log(res);
+                        found = dict[res];
+                        kanjis[i] = res;
+                    }
+                }
+            }
+        }
+        t.push(found);
+    }
+    return zip([kanjis, t]);
+}
 
 function fade_in(el) {
     el.classList.add("show");
