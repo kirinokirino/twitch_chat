@@ -10,7 +10,11 @@ async function run() {
         .then(async (jsonData) => {
             return await jsonData;
         });
-    console.log(Object.keys(dict).includes("見える"));
+    console.log(Object.keys(dict).includes("天衣無縫"));
+    console.log(Object.keys(dict).includes("天"));
+    console.log(Object.keys(dict).includes("衣"));
+    console.log(Object.keys(dict).includes("無"));
+    console.log(Object.keys(dict).includes("縫"));
     console.log(
         make_furigana(
             "この建物は現代的に見える。君が知ってる人の中で誰が一番賢い？"
@@ -49,7 +53,6 @@ coin.setAttribute("src", "coin.png");
 let first_message_chatters = [""];
 
 function add_chat_message(nick, message, emotes) {
-    console.log(make_furigana(message));
     let li = document.createElement("li");
     let header = document.createElement("h4");
     let header_contents = "";
@@ -70,7 +73,7 @@ function add_chat_message(nick, message, emotes) {
     if (emotes) {
         parseEmotes(message, p, emotes);
     } else {
-        p.textContent = message;
+        add_furigana(p, message, make_furigana(message));
     }
     li.appendChild(header);
     li.appendChild(p);
@@ -79,7 +82,7 @@ function add_chat_message(nick, message, emotes) {
     }, 50);
     setTimeout(function () {
         fade_out(li);
-    }, 10000);
+    }, 15000);
     document.querySelector("ul").appendChild(li);
     document.querySelector("ul").scrollIntoView({ block: "end" });
 }
@@ -142,6 +145,47 @@ let chunks = (txt, emotes) => {
     return parts;
 };
 
+function add_furigana(parent, message, swap_pairs) {
+    console.log(swap_pairs);
+    if (swap_pairs === undefined) {
+        parent.textContent = message;
+    } else {
+        let copy = message;
+        let ending = "";
+        for (const pair of swap_pairs) {
+            if (pair[1] !== "X") {
+                if (pair[1].alt === undefined) {
+                    const index = copy.indexOf(pair[0]);
+                    const len = pair[0].length;
+
+                    let text = document.createElement("span");
+                    text.textContent = copy.substring(0, index);
+                    parent.appendChild(text);
+                    copy = copy.substring(index + len);
+
+                    let ruby = document.createElement("ruby");
+                    let base_text = document.createElement("rb");
+                    base_text.textContent = pair[0];
+                    let furigana = document.createElement("rt");
+                    furigana.textContent = pair[1].readings[0];
+                    ruby.appendChild(base_text);
+                    ruby.appendChild(furigana);
+                    parent.appendChild(ruby);
+                } else {
+                    // multiple readings.
+                    continue;
+                }
+            } else {
+                // no readings found.
+                continue;
+            }
+        }
+        let text = document.createElement("span");
+        text.textContent = copy;
+        parent.appendChild(text);
+    }
+}
+
 function zip(arrays) {
     return arrays[0].map(function (_, i) {
         return arrays.map(function (array) {
@@ -152,32 +196,36 @@ function zip(arrays) {
 
 function make_furigana(message) {
     let kanjis = search_kanji(message).kanjis;
+    if (kanjis.length < 1) return;
     let t = [];
     for (let i = 0; i < kanjis.length; i++) {
         let found = "X";
         if (dict[kanjis[i]] !== undefined) {
-            console.log(kanjis[i]);
             found = dict[kanjis[i]];
+            console.log(kanjis[i]);
         } else {
             let len = kanjis[i].length;
             let index = message.indexOf(kanjis[i]);
             let res = message.substr(index, len + 1);
             if (dict[res] !== undefined) {
-                console.log(res);
                 found = dict[res];
                 kanjis[i] = res;
             } else {
                 res = message.substr(index - 1, len + 1);
                 if (dict[res] !== undefined) {
-                    console.log(res);
                     found = dict[res];
                     kanjis[i] = res;
                 } else {
-                    res = message.substr(index, len + 2);
+                    res = message.substr(index - 1, len);
                     if (dict[res] !== undefined) {
-                        console.log(res);
                         found = dict[res];
                         kanjis[i] = res;
+                    } else {
+                        res = message.substr(index, len + 2);
+                        if (dict[res] !== undefined) {
+                            found = dict[res];
+                            kanjis[i] = res;
+                        }
                     }
                 }
             }
