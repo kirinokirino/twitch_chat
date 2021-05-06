@@ -10,11 +10,6 @@ async function run() {
         .then(async (jsonData) => {
             return await jsonData;
         });
-    console.log(Object.keys(dict).includes("天衣無縫"));
-    console.log(Object.keys(dict).includes("天"));
-    console.log(Object.keys(dict).includes("衣"));
-    console.log(Object.keys(dict).includes("無"));
-    console.log(Object.keys(dict).includes("縫"));
     console.log(
         make_furigana(
             "この建物は現代的に見える。君が知ってる人の中で誰が一番賢い？"
@@ -72,6 +67,7 @@ function add_chat_message(nick, message, emotes) {
 
     if (emotes) {
         parseEmotes(message, p, emotes);
+	add_furigana(p, p.textContent, make_furigana(p.textContent));
     } else {
         add_furigana(p, message, make_furigana(message));
     }
@@ -150,6 +146,9 @@ function add_furigana(parent, message, swap_pairs) {
     if (swap_pairs === undefined) {
         parent.textContent = message;
     } else {
+	for (const child of parent.childNodes) {
+	  parent.removeChild(child);
+	}
         let copy = message;
         let ending = "";
         for (const pair of swap_pairs) {
