@@ -51,10 +51,10 @@ export class ChatClient {
         let p = document.createElement("p");
 
         if (emotes) {
-            p.append(parseEmotes(message, emotes));
+            p.append(this.furigana.addToNodes(parseEmotes(message, emotes)));
             //add_furigana(p, , make_furigana(p.textContent));
         } else {
-            this.furigana.add(p, message, this.furigana.make(message));
+            p.append(this.furigana.addToText(message));
         }
         li.appendChild(header);
         li.appendChild(p);

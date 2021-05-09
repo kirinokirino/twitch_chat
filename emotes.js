@@ -39,5 +39,5 @@ export function parseEmotes(message, emotes) {
             result.appendChild(emote.shift().img.cloneNode());
         }
     });
-    return result;
+    return result.children;
 }
