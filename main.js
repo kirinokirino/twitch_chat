@@ -10,5 +10,5 @@ import { ChatClient } from "./chat_client.js";
             "この建物は現代的に見える。君が知ってる人の中で誰が一番賢い？新潟"
         )
     );
-    const chat = new ChatClient(["kirinokirino"]);
+    const chat = new ChatClient(["kirinokirino"], furigana);
 })();
