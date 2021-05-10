@@ -1,6 +1,6 @@
 import {fadeIn, fadeOut} from './utils.js';
 import {parseEmotes} from './emotes.js';
-import * as _ from './tmi.js';
+import './tmi.js'; // eslint-disable-line import/no-unassigned-import
 
 export class ChatClient {
   constructor(channels, furigana) {
@@ -41,7 +41,6 @@ export class ChatClient {
       headerText += this.coin.outerHTML;
     }
 
-    
     headerText += nick + ':';
     const headerElement = document.createElement('h4');
     headerElement.innerHTML = headerText;

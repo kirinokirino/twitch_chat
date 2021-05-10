@@ -1,9 +1,9 @@
-import wasm_init, {search_kanji} from './kanji_collector.js';
+import wasmInit, {search_kanji as separateKanji} from './kanji_collector.js';
 import {zip, separateFromSorted, chunk} from './utils.js';
 
 export class Furigana {
   async init() {
-    await wasm_init();
+    await wasmInit();
     this.dictionary = await fetch('http://0.0.0.0:8080/jmdictObject.json')
       .then((response) => {
         return response.json();
@@ -11,7 +11,7 @@ export class Furigana {
       .then(async (jsonData) => {
         return jsonData;
       });
-    this.separateKanji = search_kanji;
+    this.separateKanji = separateKanji;
   }
 
   addToNodes(nodes) {
@@ -59,7 +59,6 @@ export class Furigana {
     if (swapPairs === undefined) {
       result.textContent = message;
     } else {
-      console.log(swapPairs);
       let copy = message;
       for (const pair of swapPairs) {
         if (pair[1] !== 'X') {
@@ -106,7 +105,6 @@ export class Furigana {
       let found = 'X';
       if (this.dictionary[kanjis[i]]) {
         found = this.dictionary[kanjis[i]];
-        console.log(kanjis[i]);
       } else {
         const index = message.indexOf(kanjis[i]);
         const endIndex = kanjis[i].length + index;
@@ -141,3 +139,5 @@ export class Furigana {
     return zip([kanjis, dictionaryResults]);
   }
 }
+
+function lookUp(text) {}

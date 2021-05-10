@@ -16,6 +16,7 @@ export function fadeOut(element) {
   element.classList.remove('show');
 }
 
+// Copyright (c) nc_para_  2021
 export function chunks(txt, emotes) {
   const temporaryEmotes = [];
   for (const emote of emotes) {
@@ -27,13 +28,13 @@ export function chunks(txt, emotes) {
   temporaryEmotes.sort((a, b) => a.pos.idx - b.pos.idx);
   for (const emote of temporaryEmotes) {
     parts.push(
-      txt.substr(idx, emote.pos.idx - idx),
-      txt.substr(emote.pos.idx, emote.pos.len)
+      txt.slice(idx, emote.pos.idx),
+      txt.slice(emote.pos.idx, emote.pos.idx + emote.pos.len)
     );
     idx = emote.pos.idx + emote.pos.len;
   }
 
-  parts.push(txt.substr(idx, txt.length - idx));
+  parts.push(txt.slice(idx, txt.length));
   return parts;
 }
 
