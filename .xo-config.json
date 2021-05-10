@@ -1,0 +1,9 @@
+{
+    "space": true,
+    "prettier": true,
+    "ignores": "./tmi.js",
+    "envs": [
+        "es2021",
+        "browser"
+    ]
+}
