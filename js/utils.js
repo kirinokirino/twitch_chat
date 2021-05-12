@@ -68,9 +68,9 @@ export function chunk (array, count) {
   return result
 }
 
-export function queryList (fullQuery) {
+export function queryList (fullQuery, startingFrom) {
   const queries = []
-  for (let i = 0; i < fullQuery.length; i++) {
+  for (let i = startingFrom; i < fullQuery.length+1; i++) {
     queries.push(fullQuery.slice(0, i))
   }
   return queries

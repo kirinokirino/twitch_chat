@@ -106,15 +106,16 @@ export class Furigana {
     for (let i = 0; i < kanjis.length; i++) {
       const index = message.indexOf(kanjis[i])
       const endIndex = kanjis[i].length + index
-      dictionaryResults.push(this.lookUp(message.slice(index, endIndex + 4)))
+      dictionaryResults.push(this.lookUp(message.slice(index, endIndex + 4), endIndex-index))
     }
 
     return zip([kanjis, dictionaryResults])
   }
 
-  lookUp (text) {
+  lookUp (text, baseLength) {
     let found = 'X'
-    const queries = queryList(text)
+    const queries = queryList(text, baseLength)
+    console.log(text, "   ", baseLength);
     for (const query of queries) {
       const check = this.dictionary[query]
       if (check) {
