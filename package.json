@@ -1,8 +1,0 @@
-{
-	"scripts": {
-		"test": "xo"
-	},
-	"devDependencies": {
-		"xo": "^0.40.0"
-	}
-}

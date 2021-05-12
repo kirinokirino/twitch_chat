@@ -6,7 +6,7 @@ export class ChatClient {
   constructor(channels, furigana) {
     this.furigana = furigana;
     this.coin = document.createElement('img');
-    this.coin.setAttribute('src', 'coin.png');
+    this.coin.setAttribute('src', 'img/coin.png');
     this.blacklist = ['wanna become famous'];
     this.chatters = [''];
     this.client = window.tmi.client({

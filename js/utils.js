@@ -66,3 +66,12 @@ export function chunk(array, count) {
 
   return result;
 }
+
+
+export function queryList(fullQuery) {
+  const queries = [];
+  for (let i = 0; i < fullQuery.length; i++) {
+    queries.push(fullQuery.slice(0, i));
+  }
+  return queries
+}
