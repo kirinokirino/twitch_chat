@@ -1,9 +1,0 @@
-{
-    "space": true,
-    "prettier": true,
-    "ignores": ["./tmi.js","./kanji_collector.js","./kanji_collector_bg.js"],
-    "envs": [
-        "es2021",
-        "browser"
-    ]
-}

@@ -1,0 +1,85 @@
+* {
+    font-family: 'Noto Sans CJK JP', 'Noto Sans', 'ヒラギノ明朝 ProN',
+    'Hiragino Mincho Pro', 'serif';
+    font-weight: 500;
+
+    color: white;
+}
+
+body {
+    background-image: url('../img/half_transparent.png');
+}
+
+li {
+    opacity: 0;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+ul {
+    font-size: 32px;
+
+    width: 400px;
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+h4 {
+    font-weight: inherit;
+
+    display: inline;
+    overflow: hidden;
+
+    margin: 0;
+    margin-top: 2px;
+    padding-top: 2px;
+    padding-right: 16px;
+
+    white-space: nowrap;
+    text-overflow: fade;
+
+    color: #7a96b4;
+}
+
+img {
+    height: inherit;
+    margin-bottom: -3px;
+}
+
+p {
+    display: inline;
+
+    margin: 0;
+}
+
+#black_gradient {
+    position: -webkit-sticky;
+    position:         sticky;
+    top: 0;
+
+    width: 100%;
+    height: 50px;
+
+    background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(122, 150, 180, 0) 100%
+    );
+}
+
+.show {
+    transition: opacity 400ms;
+
+    opacity: 1;
+}
+
+.hide {
+    transition: opacity 400ms;
+
+    opacity: 0;
+}
+
+.aBitSmaller {
+    width: 40px;
+}
