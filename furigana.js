@@ -1,5 +1,5 @@
 import wasmInit, {search_kanji as separateKanji} from './kanji_collector.js';
-import {zip, separateFromSorted, chunk} from './utils.js';
+import {zip, separateFromSorted, chunk, queryList} from './utils.js';
 
 export class Furigana {
   async init() {
@@ -39,7 +39,7 @@ export class Furigana {
           const furigana = document.createElement('rt');
           const p = swapPairs.find((element) => element[0] === swap);
           furigana.textContent =
-            p !== undefined && p[1].readings !== undefined
+            (p !== undefined && p[1] && p[1].readings !== undefined)
               ? p[1].readings[0]
               : '';
 
@@ -102,42 +102,25 @@ export class Furigana {
 
     const dictionaryResults = [];
     for (let i = 0; i < kanjis.length; i++) {
-      let found = 'X';
-      if (this.dictionary[kanjis[i]]) {
-        found = this.dictionary[kanjis[i]];
-      } else {
-        const index = message.indexOf(kanjis[i]);
-        const endIndex = kanjis[i].length + index;
-        let result = message.slice(index, endIndex + 1);
-        if (this.dictionary[result]) {
-          found = this.dictionary[result];
-          kanjis[i] = result;
-        } else {
-          result = message.slice(index - 1, endIndex + 1);
-          if (this.dictionary[result]) {
-            found = this.dictionary[result];
-            kanjis[i] = result;
-          } else {
-            result = message.slice(index - 1, endIndex);
-            if (this.dictionary[result]) {
-              found = this.dictionary[result];
-              kanjis[i] = result;
-            } else {
-              result = message.slice(index, endIndex + 2);
-              if (this.dictionary[result]) {
-                found = this.dictionary[result];
-                kanjis[i] = result;
-              }
-            }
-          }
-        }
-      }
-
-      dictionaryResults.push(found);
+      const index = message.indexOf(kanjis[i]);
+      const endIndex = kanjis[i].length + index;
+      dictionaryResults.push(this.lookUp(message.slice(index, endIndex + 4)));
     }
 
     return zip([kanjis, dictionaryResults]);
   }
-}
 
-function lookUp(text) {}
+  lookUp(text) {
+    let found = "X";
+    const queries = queryList(text);
+    for (const query of queries) {
+      const check = this.dictionary[query];
+      if (check) {
+        found = check;
+        break;
+      }
+    }
+
+    return found;
+  }
+}
